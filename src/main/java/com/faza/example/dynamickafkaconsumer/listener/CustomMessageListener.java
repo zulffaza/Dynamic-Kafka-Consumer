@@ -1,10 +1,12 @@
-package com.example.faza.dynamickafkaconsumer.listener;
+package com.faza.example.dynamickafkaconsumer.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.config.MethodKafkaListenerEndpoint;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
+
+import java.util.Optional;
 
 public abstract class CustomMessageListener {
 
@@ -27,10 +29,16 @@ public abstract class CustomMessageListener {
     }
 
     private String getConsumerId(String name) {
-        if (name.isBlank()) {
+        if (isBlank(name)) {
             return CustomMessageListener.class.getCanonicalName() + "#" + NUMBER_OF_LISTENERS++;
         } else {
             return name;
         }
+    }
+
+    private boolean isBlank(String string) {
+        return Optional.ofNullable(string)
+                .map(String::isBlank)
+                .orElse(true);
     }
 }

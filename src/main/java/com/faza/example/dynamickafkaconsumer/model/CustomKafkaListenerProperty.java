@@ -1,4 +1,4 @@
-package com.example.faza.dynamickafkaconsumer.model;
+package com.faza.example.dynamickafkaconsumer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

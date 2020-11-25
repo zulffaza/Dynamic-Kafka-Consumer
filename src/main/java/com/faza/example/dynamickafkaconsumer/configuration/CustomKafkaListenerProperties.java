@@ -1,6 +1,6 @@
-package com.example.faza.dynamickafkaconsumer.configuration;
+package com.faza.example.dynamickafkaconsumer.configuration;
 
-import com.example.faza.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
+import com.faza.example.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

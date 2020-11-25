@@ -1,9 +1,9 @@
-package com.example.faza.dynamickafkaconsumer.controller;
+package com.faza.example.dynamickafkaconsumer.controller;
 
-import com.example.faza.dynamickafkaconsumer.listener.CustomKafkaListenerRegistrar;
-import com.example.faza.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
-import com.example.faza.dynamickafkaconsumer.model.KafkaConsumerAssignmentResponse;
-import com.example.faza.dynamickafkaconsumer.model.KafkaConsumerResponse;
+import com.faza.example.dynamickafkaconsumer.listener.CustomKafkaListenerRegistrar;
+import com.faza.example.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
+import com.faza.example.dynamickafkaconsumer.model.KafkaConsumerAssignmentResponse;
+import com.faza.example.dynamickafkaconsumer.model.KafkaConsumerResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
