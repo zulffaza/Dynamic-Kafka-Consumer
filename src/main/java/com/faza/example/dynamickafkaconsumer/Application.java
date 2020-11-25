@@ -1,4 +1,4 @@
-package com.example.faza.dynamickafkaconsumer;
+package com.faza.example.dynamickafkaconsumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

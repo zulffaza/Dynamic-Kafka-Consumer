@@ -1,7 +1,7 @@
-package com.example.faza.dynamickafkaconsumer.listener;
+package com.faza.example.dynamickafkaconsumer.listener;
 
-import com.example.faza.dynamickafkaconsumer.configuration.CustomKafkaListenerProperties;
-import com.example.faza.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
+import com.faza.example.dynamickafkaconsumer.configuration.CustomKafkaListenerProperties;
+import com.faza.example.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;

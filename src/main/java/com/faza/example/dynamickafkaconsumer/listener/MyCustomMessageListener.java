@@ -1,4 +1,4 @@
-package com.example.faza.dynamickafkaconsumer.listener;
+package com.faza.example.dynamickafkaconsumer.listener;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

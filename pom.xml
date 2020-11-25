@@ -8,9 +8,9 @@
 		<version>2.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example.faza</groupId>
+	<groupId>com.faza.example</groupId>
 	<artifactId>dynamic-kafka-consumer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-1-SNAPSHOT</version>
 	<name>Dynamic Kafka Consumer</name>
 	<description>Demo project for dynamic kafka consumer</description>
 

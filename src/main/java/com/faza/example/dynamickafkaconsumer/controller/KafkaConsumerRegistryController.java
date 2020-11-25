@@ -1,14 +1,19 @@
-package com.example.faza.dynamickafkaconsumer.controller;
+package com.faza.example.dynamickafkaconsumer.controller;
 
-import com.example.faza.dynamickafkaconsumer.listener.CustomKafkaListenerRegistrar;
-import com.example.faza.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
-import com.example.faza.dynamickafkaconsumer.model.KafkaConsumerAssignmentResponse;
-import com.example.faza.dynamickafkaconsumer.model.KafkaConsumerResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.faza.example.dynamickafkaconsumer.model.Constant;
+import com.faza.example.dynamickafkaconsumer.model.ConsumerAction;
+import com.faza.example.dynamickafkaconsumer.model.ConsumerActionRequest;
+import com.faza.example.dynamickafkaconsumer.model.CustomKafkaListenerProperty;
+import com.faza.example.dynamickafkaconsumer.model.KafkaConsumerAssignmentResponse;
+import com.faza.example.dynamickafkaconsumer.model.KafkaConsumerResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +36,10 @@ public class KafkaConsumerRegistryController {
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     @Autowired
-    private CustomKafkaListenerRegistrar customKafkaListenerRegistrar;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @GetMapping
     public List<KafkaConsumerResponse> getConsumerIds() {
@@ -45,12 +53,14 @@ public class KafkaConsumerRegistryController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createConsumer(@RequestParam String topic, @RequestParam String listenerClass,
                                @RequestParam(required = false) boolean startImmediately) {
-        customKafkaListenerRegistrar.registerCustomKafkaListener(null,
-                CustomKafkaListenerProperty.builder()
+        publishMessage(ConsumerActionRequest.builder()
+                .consumerProperty(CustomKafkaListenerProperty.builder()
                         .topic(topic)
                         .listenerClass(listenerClass)
-                        .build(),
-                startImmediately);
+                        .build())
+                .startImmediately(startImmediately)
+                .consumerAction(ConsumerAction.CREATE)
+                .build());
     }
 
     @PostMapping(path = "/activate")
@@ -62,8 +72,10 @@ public class KafkaConsumerRegistryController {
         } else if (listenerContainer.isRunning()) {
             throw new RuntimeException(String.format("Consumer with id %s is already running", consumerId));
         } else {
-            log.info("Running a consumer with id " + consumerId);
-            listenerContainer.start();
+            publishMessage(ConsumerActionRequest.builder()
+                    .consumerId(consumerId)
+                    .consumerAction(ConsumerAction.ACTIVATE)
+                    .build());
         }
     }
 
@@ -80,8 +92,10 @@ public class KafkaConsumerRegistryController {
         } else if (listenerContainer.isPauseRequested()) {
             throw new RuntimeException(String.format("Consumer with id %s is already requested to be paused", consumerId));
         } else {
-            log.info("Pausing a consumer with id " + consumerId);
-            listenerContainer.pause();
+            publishMessage(ConsumerActionRequest.builder()
+                    .consumerId(consumerId)
+                    .consumerAction(ConsumerAction.PAUSE)
+                    .build());
         }
     }
 
@@ -96,8 +110,10 @@ public class KafkaConsumerRegistryController {
         } else if (!listenerContainer.isContainerPaused()) {
             throw new RuntimeException(String.format("Consumer with id %s is not paused", consumerId));
         } else {
-            log.info("Resuming a consumer with id " + consumerId);
-            listenerContainer.resume();
+            publishMessage(ConsumerActionRequest.builder()
+                    .consumerId(consumerId)
+                    .consumerAction(ConsumerAction.RESUME)
+                    .build());
         }
     }
 
@@ -110,8 +126,10 @@ public class KafkaConsumerRegistryController {
         } else if (!listenerContainer.isRunning()) {
             throw new RuntimeException(String.format("Consumer with id %s is already stop", consumerId));
         } else {
-            log.info("Stopping a consumer with id " + consumerId);
-            listenerContainer.stop();
+            publishMessage(ConsumerActionRequest.builder()
+                    .consumerId(consumerId)
+                    .consumerAction(ConsumerAction.DEACTIVATE)
+                    .build());
         }
     }
 
@@ -137,5 +155,11 @@ public class KafkaConsumerRegistryController {
                 .topic(topicPartition.topic())
                 .partition(topicPartition.partition())
                 .build();
+    }
+
+    @SneakyThrows
+    private void publishMessage(Object message) {
+        log.info(String.format("Publishing message %s to %s", message, Constant.CONSUMER_ACTION_TOPIC));
+        kafkaTemplate.send(Constant.CONSUMER_ACTION_TOPIC, objectMapper.writeValueAsString(message));
     }
 }
